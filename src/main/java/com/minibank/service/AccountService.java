@@ -1,6 +1,7 @@
 package com.minibank.service;
 
 import com.minibank.entity.Account;
+import com.minibank.exception.AccountAlreadyExistsException;
 import com.minibank.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,17 @@ public class AccountService {
 
     @Transactional
     public Account createAccount(String accountNumber, String ownerName, BigDecimal initialDeposit) {
-        return accountRepository.save(
-                Account.builder()
-                        .accountNumber(accountNumber)
-                        .ownerName(ownerName)
-                        .balance(initialDeposit)
-                        .build()
-        );
+        if (accountRepository.existsByAccountNumber(accountNumber)) {
+            throw new AccountAlreadyExistsException("이미 존재하는 계좌번호입니다: " + accountNumber);
+        }
+
+        Account account = Account.builder()
+                .accountNumber(accountNumber)
+                .ownerName(ownerName)
+                .balance(initialDeposit)
+                .build();
+
+        return accountRepository.save(account);
     }
 
     @Transactional
