@@ -4,7 +4,7 @@ import com.minibank.entity.Account;
 import com.minibank.exception.AccountAlreadyExistsException;
 import com.minibank.repository.AccountRepository;
 import com.minibank.util.Money;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,12 @@ import java.math.BigDecimal;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+
+    @Transactional(readOnly = true)
+    public Account getAccount(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
+    }
 
     @Transactional
     public Account deposit(String accountNumber, BigDecimal amount) {
@@ -44,11 +50,10 @@ public class AccountService {
         Account account = Account.builder()
                 .accountNumber(accountNumber)
                 .ownerName(ownerName)
-                .balance(init) // null 방지
+                .balance(init)
                 .build();
         return accountRepository.save(account);
     }
-
 
     @Transactional
     public void deleteAccount(String accountNumber) {

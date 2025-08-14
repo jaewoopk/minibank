@@ -27,14 +27,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 빌더에서 쓰려면 필드가 실제로 있어야 합니다
     @Column(nullable = false, length = 16)
     private String accountNumber;
 
     @Column(nullable = false, length = 50)
     private String ownerName;
 
-    @Column(nullable = false, precision = 19, scale = 0) // KRW 기준
+    @Column(nullable = false, precision = 19, scale = 0)
     private BigDecimal balance;
 
     @CreatedDate

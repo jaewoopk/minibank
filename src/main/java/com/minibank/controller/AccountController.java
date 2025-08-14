@@ -18,6 +18,12 @@ public class AccountController {
 
     private final AccountService accountService;
 
+    @GetMapping("/{accountNumber}")
+    public ResponseEntity<AccountResponse> getAccount(@PathVariable String accountNumber) {
+        Account account = accountService.getAccount(accountNumber);
+        return ResponseEntity.ok(AccountResponse.from(account));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<AccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request) {
         Account account = accountService.createAccount(
